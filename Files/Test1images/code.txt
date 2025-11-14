@@ -1,0 +1,53 @@
+if (msg.statusCode !== 200) {
+    msg.payload = `<html><body><h1>Error</h1>
+                 <p>Failed to fetch data from BrazilAPI.</p>
+                 <p>Status Code: ${msg.statusCode}</p>
+                 <pre>${JSON.stringify(msg.payload, null, 2)}</pre>
+                 </body></html>`;
+    msg.headers = { 'Content-Type': 'text/html; charset=utf-8' };
+    return msg;
+}
+
+const brokers = msg.payload;
+
+if (!Array.isArray(brokers)) {
+    msg.payload = `<html><body><h1>Error</h1>
+                 <p>Invalid data received from API. Expected an array.</p>
+                 </body></html>`;
+    msg.headers = { 'Content-Type': 'text/html; charset=utf-8' };
+    return msg;
+}
+
+const listItems = brokers.map(broker => {
+    const name = broker.nome_social || 'N/A';
+    const city = broker.municipio || 'N/A';
+    const cnpj = broker.cnpj || 'N/A';
+
+    return `<li>${name} - ${city} / ${cnpj}</li>`;
+});
+
+let html = '<html>';
+html += '<head><title>Test 1</title>';
+html += `<style>
+            body { font-family: sans-serif; margin: 2em; background-color: #f9f9f9; } 
+            h1 { color: #333; } 
+            ul { list-style-type: none; padding-left: 0; } 
+            li { 
+                background: #fff; 
+                border: 1px solid #ddd; 
+                padding: 12px; 
+                margin-bottom: 8px; 
+                border-radius: 4px; 
+            }
+         </style>`;
+html += '</head><body>';
+html += '<h1>Broker Catalog (BrazilAPI)</h1>';
+html += '<ul>';
+html += listItems.join('\n');
+html += '</ul>';
+html += '</body></html>';
+
+msg.payload = html;
+msg.headers = { 'Content-Type': 'text/html; charset=utf-8' };
+
+return msg;
