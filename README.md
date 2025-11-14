@@ -2,11 +2,11 @@
 
 The first thing to do, is to open a node-red locally running server on the terminal by tipying "node-red", like the example bellow:
 
-![alt text](Test1images/terminal.png)
+![alt text](Files/Test1images/terminal.png)
 
 Then, you need to copy the URL of the local server in the terminal and paste it on the browser: 
 
-![alt text](Test1images/server.png)
+![alt text](Files/Test1images/server.png)
 
 When the node-red server load in your browser, you will need four nodes connected:
 
@@ -14,23 +14,23 @@ http in ---> http request ---> function ---> http response
 
  like the example bellow:
 
-![alt text](Test1images/NodeFlow.png)
+![alt text](Files/Test1images/NodeFlow.png)
 
 Now, you need to do the node configuration:
 
 Node 1: http in
 
-![alt text](Test1images/Node1.png)
+![alt text](Files/Test1images/Node1.png)
 
 Node 2: http request
 
-![alt text](Test1images/Node2.png)
+![alt text](Files/Test1images/Node2.png)
 
 Node 3: function
 
 Set the function to "On message" and paste the code below:
 
-[Function code](Test1images/code.txt)
+[Function code](Files/Test1images/code.txt)
 
 Node 4: http response
 
