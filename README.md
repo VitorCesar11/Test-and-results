@@ -121,4 +121,7 @@ Node 9: http response
 
 ![alt text](Files/finalresponse.png)
 
+access http://127.0.0.1:1880/search-cep to search a zip code
+
+
 JSON flow to copy and paste: [Flow JSON](flow.json)
