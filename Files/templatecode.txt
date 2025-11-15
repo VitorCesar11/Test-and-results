@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>Buscar CEP</title>
+    <style> body { font-family: sans-serif; padding: 20px; } </style>
+</head>
+<body>
+    <h1>Buscar Endereço por CEP</h1>
+    <form action="/submit-cep" method="GET">
+        <label for="cep">Digite o CEP (apenas números):</label>
+        <input type="text" id="cep" name="cep" pattern="[0-9]{8}" required>
+        <button type="submit">Buscar</button>
+    </form>
+    <br>
+    <a href="/brokers">Ver Lista de Corretoras</a>
+</body>
+</html>

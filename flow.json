@@ -1,0 +1,399 @@
+[
+    {
+        "id": "d26b29d2495629a8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d52d469fa1df3264",
+        "type": "http in",
+        "z": "d26b29d2495629a8",
+        "name": "GET /brokers",
+        "url": "/brokers",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 210,
+        "y": 100,
+        "wires": [
+            [
+                "92974b776e38ef42"
+            ]
+        ]
+    },
+    {
+        "id": "92974b776e38ef42",
+        "type": "http request",
+        "z": "d26b29d2495629a8",
+        "name": "Fetch BrazilAPI (Brokers)",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://brasilapi.com.br/api/cvm/corretoras/v1",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 410,
+        "y": 100,
+        "wires": [
+            [
+                "b0a2bafbcc9708ba"
+            ]
+        ]
+    },
+    {
+        "id": "b0a2bafbcc9708ba",
+        "type": "function",
+        "z": "d26b29d2495629a8",
+        "name": "Format Broker HTML",
+        "func": "if (msg.statusCode !== 200) {\n    msg.payload = `<html><body><h1>Error</h1>\n                 <p>Failed to fetch data from BrazilAPI.</p>\n                 <p>Status Code: ${msg.statusCode}</p>\n                 <pre>${JSON.stringify(msg.payload, null, 2)}</pre>\n                 </body></html>`;\n    msg.headers = { 'Content-Type': 'text/html; charset=utf-8' };\n    return msg;\n}\n\nconst brokers = msg.payload;\n\nif (!Array.isArray(brokers)) {\n    msg.payload = `<html><body><h1>Error</h1>\n                 <p>Invalid data received from API. Expected an array.</p>\n                 </body></html>`;\n    msg.headers = { 'Content-Type': 'text/html; charset=utf-8' };\n    return msg;\n}\n\nconst listItems = brokers.map(broker => {\n    const name = broker.nome_social || 'N/A';\n    const city = broker.municipio || 'N/A';\n    const cnpj = broker.cnpj || 'N/A';\n\n    return `<li>${name} - ${city} / ${cnpj}</li>`;\n});\n\nlet html = '<html>';\nhtml += '<head><title>Broker Catalog</title>';\nhtml += `<style>\n            body { font-family: sans-serif; margin: 2em; background-color: #f9f9f9; } \n            h1 { color: #333; } \n            ul { list-style-type: none; padding-left: 0; } \n            li { \n                background: #fff; \n                border: 1px solid #ddd; \n                padding: 12px; \n                margin-bottom: 8px; \n                border-radius: 4px; \n            }\n         </style>`;\nhtml += '</head><body>';\nhtml += '<h1>Broker Catalog (BrazilAPI)</h1>';\nhtml += '<ul>';\nhtml += listItems.join('\\n');\nhtml += '</ul>';\nhtml += '<hr><a href=\"/search-cep\">Ir para Busca CEP</a>';\nhtml += '</body></html>';\n\nmsg.payload = html;\nmsg.headers = { 'Content-Type': 'text/html; charset=utf-8' };\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 100,
+        "wires": [
+            [
+                "7806d1bcdf1724c5"
+            ]
+        ]
+    },
+    {
+        "id": "7806d1bcdf1724c5",
+        "type": "http response",
+        "z": "d26b29d2495629a8",
+        "name": "Send response (Brokers)",
+        "statusCode": "",
+        "headers": {},
+        "x": 910,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "55c975c265ca9f9a",
+        "type": "http in",
+        "z": "d26b29d2495629a8",
+        "name": "CEP Opção 1: /cep/:cep",
+        "url": "/cep/:cep",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 230,
+        "y": 240,
+        "wires": [
+            [
+                "974f440494ebf235"
+            ]
+        ]
+    },
+    {
+        "id": "974f440494ebf235",
+        "type": "change",
+        "z": "d26b29d2495629a8",
+        "name": "Set msg.cep from params",
+        "rules": [
+            {
+                "t": "set",
+                "p": "cep",
+                "pt": "msg",
+                "to": "req.params.cep",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 240,
+        "wires": [
+            [
+                "4f9d9724ae91f0bc"
+            ]
+        ]
+    },
+    {
+        "id": "4f9d9724ae91f0bc",
+        "type": "link out",
+        "z": "d26b29d2495629a8",
+        "name": "to-api-call",
+        "mode": "link",
+        "links": [
+            "45386a4d66427777"
+        ],
+        "x": 635,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "45386a4d66427777",
+        "type": "link in",
+        "z": "d26b29d2495629a8",
+        "name": "from-inputs",
+        "links": [
+            "4f9d9724ae91f0bc"
+        ],
+        "x": 215,
+        "y": 520,
+        "wires": [
+            [
+                "88f32ea402692de9"
+            ]
+        ]
+    },
+    {
+        "id": "88f32ea402692de9",
+        "type": "function",
+        "z": "d26b29d2495629a8",
+        "name": "Build CEP API URL",
+        "func": "msg.url = \"https://brasilapi.com.br/api/cep/v2/\" + msg.cep;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 520,
+        "wires": [
+            [
+                "8b8135ded9cf7814"
+            ]
+        ]
+    },
+    {
+        "id": "8b8135ded9cf7814",
+        "type": "http request",
+        "z": "d26b29d2495629a8",
+        "name": "Call BrasilAPI CEP V2",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": true,
+        "headers": [],
+        "x": 610,
+        "y": 520,
+        "wires": [
+            [
+                "25eefddb26c23863"
+            ]
+        ]
+    },
+    {
+        "id": "25eefddb26c23863",
+        "type": "template",
+        "z": "d26b29d2495629a8",
+        "name": "Format Success HTML",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n<head>\n    <title>Resultado do CEP</title>\n    <style> body { font-family: sans-serif; padding: 20px; } </style>\n</head>\n<body>\n    <h1>Detalhes do CEP: {{payload.cep}}</h1>\n    <ul>\n        <li><b>Rua:</b> {{payload.street}}</li>\n        <li><b>Bairro:</b> {{payload.neighborhood}}</li>\n        <li><b>Cidade:</b> {{payload.city}}</li>\n        <li><b>Estado:</b> {{payload.state}}</li>\n    </ul>\n    <br>\n    <a href=\"/search-cep\">Buscar outro CEP</a>\n    <br>\n    <a href=\"/brokers\">Ver Lista de Corretoras</a>\n</body>\n</html>",
+        "output": "str",
+        "x": 860,
+        "y": 500,
+        "wires": [
+            [
+                "934bc6421b7e3b93"
+            ]
+        ]
+    },
+    {
+        "id": "8c751b80e3e18be7",
+        "type": "template",
+        "z": "d26b29d2495629a8",
+        "name": "Format Error HTML",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n<head>\n    <title>Erro</title>\n    <style> body { font-family: sans-serif; padding: 20px; } </style>\n</head>\n<body>\n    <h1>Erro ao buscar CEP</h1>\n    <p>O CEP informado não foi encontrado ou é inválido.</p>\n    <p><i>Mensagem: {{payload.message}} ({{statusCode}})</i></p>\n    <br>\n    <a href=\"/search-cep\">Tentar Novamente</a>\n    <br>\n    <a href=\"/brokers\">Ver Lista de Corretoras</a>\n</body>\n</html>",
+        "output": "str",
+        "x": 850,
+        "y": 560,
+        "wires": [
+            [
+                "934bc6421b7e3b93"
+            ]
+        ]
+    },
+    {
+        "id": "934bc6421b7e3b93",
+        "type": "link out",
+        "z": "d26b29d2495629a8",
+        "name": "to-http-response",
+        "mode": "link",
+        "links": [
+            "b94dda585074d68c"
+        ],
+        "x": 1055,
+        "y": 530,
+        "wires": []
+    },
+    {
+        "id": "b94dda585074d68c",
+        "type": "link in",
+        "z": "d26b29d2495629a8",
+        "name": "from-formatters",
+        "links": [
+            "934bc6421b7e3b93"
+        ],
+        "x": 395,
+        "y": 660,
+        "wires": [
+            [
+                "860656ae8867096d",
+                "aa8fc9c8aed91959"
+            ]
+        ]
+    },
+    {
+        "id": "aa8fc9c8aed91959",
+        "type": "http response",
+        "z": "d26b29d2495629a8",
+        "name": "Final Response (CEP)",
+        "statusCode": "",
+        "headers": {},
+        "x": 740,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "731de48cc236e049",
+        "type": "http in",
+        "z": "d26b29d2495629a8",
+        "name": "CEP Opção 2: /search-cep (Form)",
+        "url": "/search-cep",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 220,
+        "y": 360,
+        "wires": [
+            [
+                "fbbb96b54cba541f"
+            ]
+        ]
+    },
+    {
+        "id": "fbbb96b54cba541f",
+        "type": "template",
+        "z": "d26b29d2495629a8",
+        "name": "HTML Form (CEP)",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n<head>\n    <title>Buscar CEP</title>\n    <style> body { font-family: sans-serif; padding: 20px; } </style>\n</head>\n<body>\n    <h1>Buscar Endereço por CEP</h1>\n    <form action=\"/submit-cep\" method=\"GET\">\n        <label for=\"cep\">Digite o CEP (apenas números):</label>\n        <input type=\"text\" id=\"cep\" name=\"cep\" pattern=\"[0-9]{8}\" required>\n        <button type=\"submit\">Buscar</button>\n    </form>\n    <br>\n    <a href=\"/brokers\">Ver Lista de Corretoras</a>\n</body>\n</html>",
+        "output": "str",
+        "x": 500,
+        "y": 360,
+        "wires": [
+            [
+                "860656ae8867096d",
+                "cf9ac44fa1a7a2ed"
+            ]
+        ]
+    },
+    {
+        "id": "cf9ac44fa1a7a2ed",
+        "type": "http response",
+        "z": "d26b29d2495629a8",
+        "name": "Send Response (Form)",
+        "statusCode": "",
+        "headers": {},
+        "x": 790,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "860656ae8867096d",
+        "type": "change",
+        "z": "d26b29d2495629a8",
+        "name": "Set Content-Type Header",
+        "rules": [
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "{\"content-type\":\"text/html; charset=utf-8\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 550,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8a34a31ceb6db267",
+        "type": "http in",
+        "z": "d26b29d2495629a8",
+        "name": "CEP Opção 2: /submit-cep (Handler)",
+        "url": "/submit-cep",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 210,
+        "y": 420,
+        "wires": [
+            [
+                "4355d6d59efef2d3"
+            ]
+        ]
+    },
+    {
+        "id": "4355d6d59efef2d3",
+        "type": "change",
+        "z": "d26b29d2495629a8",
+        "name": "Set msg.cep from query",
+        "rules": [
+            {
+                "t": "set",
+                "p": "cep",
+                "pt": "msg",
+                "to": "req.query.cep",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 420,
+        "wires": [
+            [
+                "4f9d9724ae91f0bc"
+            ]
+        ]
+    }
+]
