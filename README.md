@@ -115,4 +115,4 @@ Node 9: http response
 
 ![alt text](Files/finalresponse.png)
 
-JSON flow to copy and paste: [text](flow.json)
+JSON flow to copy and paste: [Flow JSON](flow.json)
