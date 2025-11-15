@@ -45,25 +45,31 @@ Click on deploy then access http://127.0.0.1:1880/brokers to see the web page li
 # Option 1: Route Input (/cep/:cep)
 
 Node 1: http in
+
 ![alt text](Files/httpin.png)
 
 Node 2: change
+
 ![alt text](Files/change.png)
 
 Node 3: Link out
+
 ![alt text](Files/linkout.png)
 
 # Option 2: HTML Form(/search-cep)
 
 Node 1: http in
+
 ![alt text](Files/httpin2.png)
 
 Node 2: Template
+
 ![alt text](Files/template.png)
 
 [Template code](Files/templatecode.txt)
 
 Node 3: http response
+
 ![alt text](Files/response.png)
 
 # Option 2: Form Processing (/submit-cep)
