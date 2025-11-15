@@ -69,39 +69,50 @@ Node 3: http response
 # Option 2: Form Processing (/submit-cep)
 
 Node 1: http in
+
 ![alt text](Files/in.png)
 
 Node 2: Change
+
 ![alt text](Files/changenode.png)
 
 
 # API logic 
 
 Node 1: link in
+
 ![alt text](Files/link.png)
 
 Node 2: Function
+
 ![alt text](Files/function.png)
 
 Node 3: http request
+
 ![alt text](Files/Request.png)
 
 Node 4: template 
+
 ![alt text](Files/templatenode.png)
 
 Node 5: Link Out
+
 ![alt text](Files/out.png)
 
 Node 6: Error template
+
 ![alt text](Files/error.png)
 
 Node 7: change node
+
 ![alt text](Files/ch.png)
 
 Node 8: link in 
+
 ![alt text](Files/innode.png)
 
 Node 9: http response
+
 ![alt text](Files/finalresponse.png)
 
 JSON flow to copy and paste: [text](flow.json)
