@@ -8,9 +8,75 @@
         "env": []
     },
     {
+        "id": "2704cfaedadaeffd",
+        "type": "group",
+        "z": "d26b29d2495629a8",
+        "name": "Broker Catalog and zip code search",
+        "style": {
+            "label": true,
+            "stroke": "#ff0000",
+            "fill": "#ffffff",
+            "color": "#000000"
+        },
+        "nodes": [
+            "d52d469fa1df3264",
+            "92974b776e38ef42",
+            "b0a2bafbcc9708ba",
+            "7806d1bcdf1724c5",
+            "55c975c265ca9f9a",
+            "974f440494ebf235",
+            "4f9d9724ae91f0bc",
+            "45386a4d66427777",
+            "88f32ea402692de9",
+            "8b8135ded9cf7814",
+            "25eefddb26c23863",
+            "8c751b80e3e18be7",
+            "934bc6421b7e3b93",
+            "b94dda585074d68c",
+            "aa8fc9c8aed91959",
+            "731de48cc236e049",
+            "fbbb96b54cba541f",
+            "cf9ac44fa1a7a2ed",
+            "860656ae8867096d",
+            "8a34a31ceb6db267",
+            "4355d6d59efef2d3"
+        ],
+        "x": 44,
+        "y": 59,
+        "w": 1052,
+        "h": 642
+    },
+    {
+        "id": "05a621e876aa4ac6",
+        "type": "group",
+        "z": "d26b29d2495629a8",
+        "name": "MQTT challenge",
+        "style": {
+            "stroke": "#ff0000",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "a8a44d97031916df",
+            "5b8b1678a0371031",
+            "d6bf1df6e04aa282",
+            "97ea651895f4370f",
+            "587cc42a334db1cf",
+            "82842b4d830c8d4f",
+            "31ffa1eccbd24d31",
+            "25a8d77889d81c43",
+            "a94532b2d8405c0f"
+        ],
+        "x": 14,
+        "y": 759,
+        "w": 1322,
+        "h": 202
+    },
+    {
         "id": "d52d469fa1df3264",
         "type": "http in",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "GET /brokers",
         "url": "/brokers",
         "method": "get",
@@ -29,6 +95,7 @@
         "id": "92974b776e38ef42",
         "type": "http request",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Fetch BrazilAPI (Brokers)",
         "method": "GET",
         "ret": "obj",
@@ -53,6 +120,7 @@
         "id": "b0a2bafbcc9708ba",
         "type": "function",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Format Broker HTML",
         "func": "if (msg.statusCode !== 200) {\n    msg.payload = `<html><body><h1>Error</h1>\n                 <p>Failed to fetch data from BrazilAPI.</p>\n                 <p>Status Code: ${msg.statusCode}</p>\n                 <pre>${JSON.stringify(msg.payload, null, 2)}</pre>\n                 </body></html>`;\n    msg.headers = { 'Content-Type': 'text/html; charset=utf-8' };\n    return msg;\n}\n\nconst brokers = msg.payload;\n\nif (!Array.isArray(brokers)) {\n    msg.payload = `<html><body><h1>Error</h1>\n                 <p>Invalid data received from API. Expected an array.</p>\n                 </body></html>`;\n    msg.headers = { 'Content-Type': 'text/html; charset=utf-8' };\n    return msg;\n}\n\nconst listItems = brokers.map(broker => {\n    const name = broker.nome_social || 'N/A';\n    const city = broker.municipio || 'N/A';\n    const cnpj = broker.cnpj || 'N/A';\n\n    return `<li>${name} - ${city} / ${cnpj}</li>`;\n});\n\nlet html = '<html>';\nhtml += '<head><title>Broker Catalog</title>';\nhtml += `<style>\n            body { font-family: sans-serif; margin: 2em; background-color: #f9f9f9; } \n            h1 { color: #333; } \n            ul { list-style-type: none; padding-left: 0; } \n            li { \n                background: #fff; \n                border: 1px solid #ddd; \n                padding: 12px; \n                margin-bottom: 8px; \n                border-radius: 4px; \n            }\n         </style>`;\nhtml += '</head><body>';\nhtml += '<h1>Broker Catalog (BrazilAPI)</h1>';\nhtml += '<ul>';\nhtml += listItems.join('\\n');\nhtml += '</ul>';\nhtml += '<hr><a href=\"/search-cep\">Ir para Busca CEP</a>';\nhtml += '</body></html>';\n\nmsg.payload = html;\nmsg.headers = { 'Content-Type': 'text/html; charset=utf-8' };\n\nreturn msg;",
         "outputs": 1,
@@ -73,6 +141,7 @@
         "id": "7806d1bcdf1724c5",
         "type": "http response",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Send response (Brokers)",
         "statusCode": "",
         "headers": {},
@@ -84,6 +153,7 @@
         "id": "55c975c265ca9f9a",
         "type": "http in",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "CEP Opção 1: /cep/:cep",
         "url": "/cep/:cep",
         "method": "get",
@@ -102,6 +172,7 @@
         "id": "974f440494ebf235",
         "type": "change",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Set msg.cep from params",
         "rules": [
             {
@@ -129,6 +200,7 @@
         "id": "4f9d9724ae91f0bc",
         "type": "link out",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "to-api-call",
         "mode": "link",
         "links": [
@@ -142,6 +214,7 @@
         "id": "45386a4d66427777",
         "type": "link in",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "from-inputs",
         "links": [
             "4f9d9724ae91f0bc"
@@ -158,6 +231,7 @@
         "id": "88f32ea402692de9",
         "type": "function",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Build CEP API URL",
         "func": "msg.url = \"https://brasilapi.com.br/api/cep/v2/\" + msg.cep;\nreturn msg;",
         "outputs": 1,
@@ -178,6 +252,7 @@
         "id": "8b8135ded9cf7814",
         "type": "http request",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Call BrasilAPI CEP V2",
         "method": "GET",
         "ret": "obj",
@@ -202,6 +277,7 @@
         "id": "25eefddb26c23863",
         "type": "template",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Format Success HTML",
         "field": "payload",
         "fieldType": "msg",
@@ -221,6 +297,7 @@
         "id": "8c751b80e3e18be7",
         "type": "template",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Format Error HTML",
         "field": "payload",
         "fieldType": "msg",
@@ -240,6 +317,7 @@
         "id": "934bc6421b7e3b93",
         "type": "link out",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "to-http-response",
         "mode": "link",
         "links": [
@@ -253,6 +331,7 @@
         "id": "b94dda585074d68c",
         "type": "link in",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "from-formatters",
         "links": [
             "934bc6421b7e3b93"
@@ -270,6 +349,7 @@
         "id": "aa8fc9c8aed91959",
         "type": "http response",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Final Response (CEP)",
         "statusCode": "",
         "headers": {},
@@ -281,6 +361,7 @@
         "id": "731de48cc236e049",
         "type": "http in",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "CEP Opção 2: /search-cep (Form)",
         "url": "/search-cep",
         "method": "get",
@@ -299,6 +380,7 @@
         "id": "fbbb96b54cba541f",
         "type": "template",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "HTML Form (CEP)",
         "field": "payload",
         "fieldType": "msg",
@@ -319,6 +401,7 @@
         "id": "cf9ac44fa1a7a2ed",
         "type": "http response",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Send Response (Form)",
         "statusCode": "",
         "headers": {},
@@ -330,6 +413,7 @@
         "id": "860656ae8867096d",
         "type": "change",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Set Content-Type Header",
         "rules": [
             {
@@ -355,6 +439,7 @@
         "id": "8a34a31ceb6db267",
         "type": "http in",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "CEP Opção 2: /submit-cep (Handler)",
         "url": "/submit-cep",
         "method": "get",
@@ -373,6 +458,7 @@
         "id": "4355d6d59efef2d3",
         "type": "change",
         "z": "d26b29d2495629a8",
+        "g": "2704cfaedadaeffd",
         "name": "Set msg.cep from query",
         "rules": [
             {
@@ -395,5 +481,222 @@
                 "4f9d9724ae91f0bc"
             ]
         ]
+    },
+    {
+        "id": "a8a44d97031916df",
+        "type": "mqtt in",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Listen for CEP",
+        "topic": "cep/request",
+        "qos": "1",
+        "datatype": "utf8",
+        "broker": "c5f0865.f0a5f78",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 820,
+        "wires": [
+            [
+                "5b8b1678a0371031"
+            ]
+        ]
+    },
+    {
+        "id": "5b8b1678a0371031",
+        "type": "change",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Set msg.cep from payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "cep",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 330,
+        "y": 820,
+        "wires": [
+            [
+                "d6bf1df6e04aa282"
+            ]
+        ]
+    },
+    {
+        "id": "d6bf1df6e04aa282",
+        "type": "function",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Build CEP API URL",
+        "func": "msg.url = \"https://brasilapi.com.br/api/cep/v2/\" + msg.cep;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 820,
+        "wires": [
+            [
+                "97ea651895f4370f"
+            ]
+        ]
+    },
+    {
+        "id": "97ea651895f4370f",
+        "type": "http request",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Call BrasilAPI CEP V2",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": true,
+        "headers": [],
+        "x": 770,
+        "y": 820,
+        "wires": [
+            [
+                "587cc42a334db1cf"
+            ]
+        ]
+    },
+    {
+        "id": "587cc42a334db1cf",
+        "type": "json",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Convert Object -> String",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 1020,
+        "y": 800,
+        "wires": [
+            [
+                "82842b4d830c8d4f"
+            ]
+        ]
+    },
+    {
+        "id": "82842b4d830c8d4f",
+        "type": "mqtt out",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Publish Details",
+        "topic": "cep/details",
+        "qos": "1",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "c5f0865.f0a5f78",
+        "x": 1230,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "31ffa1eccbd24d31",
+        "type": "function",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Format Error JSON",
+        "func": "// The original CEP is in msg.cep\n// The error details are in msg.payload\nmsg.payload = {\n    \"error\": \"Failed to lookup CEP\",\n    \"cep_requested\": msg.cep,\n    \"api_status\": msg.statusCode,\n    \"api_message\": msg.payload.message || \"Not found\"\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 860,
+        "wires": [
+            [
+                "25a8d77889d81c43"
+            ]
+        ]
+    },
+    {
+        "id": "25a8d77889d81c43",
+        "type": "json",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Convert Object -> String",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 1020,
+        "y": 920,
+        "wires": [
+            [
+                "a94532b2d8405c0f"
+            ]
+        ]
+    },
+    {
+        "id": "a94532b2d8405c0f",
+        "type": "mqtt out",
+        "z": "d26b29d2495629a8",
+        "g": "05a621e876aa4ac6",
+        "name": "Publish Error",
+        "topic": "cep/error",
+        "qos": "1",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "c5f0865.f0a5f78",
+        "x": 1220,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "c5f0865.f0a5f78",
+        "type": "mqtt-broker",
+        "name": "HiveMQ",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
     }
 ]
